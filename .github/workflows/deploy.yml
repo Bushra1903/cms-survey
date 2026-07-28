@@ -1,27 +1,13 @@
-name: Deploy
+name: Deploy to Hostinger
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:      # allows manual triggering from GitHub Actions tab
-
-# Grant GITHUB_TOKEN permission to deploy to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Only one deployment at a time
-concurrency:
-  group: pages
-  cancel-in-progress: true
+  workflow_dispatch:      # ← allows Railway backend to trigger this
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout code
@@ -39,18 +25,19 @@ jobs:
       - name: Build frontend
         run: npm run build
         working-directory: frontend
+        env:
+          # This bakes your Railway backend URL into the static build
+          # so the deployed site knows where to fetch surveys from
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Confirm build output
         run: ls -la frontend/dist
 
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload build artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          path: ./frontend/dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./frontend/dist/
+          server-dir: /public_html/
