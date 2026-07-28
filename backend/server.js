@@ -73,32 +73,48 @@ app.delete('/api/surveys/:id', (req, res) => {
 //   https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow}/dispatches
 // ---------------------------------------------------------------------------
 async function triggerGitHubBuild() {
-  // --- REAL IMPLEMENTATION (uncomment and fill in for production) ---
-  //
   const owner = process.env.GITHUB_OWNER;
-const repo = process.env.GITHUB_REPO; // 'cms-survey'
-const workflowId = 'deploy.yml';       // the filename of your workflow
-const token = process.env.GITHUB_TOKEN;
+  const repo = process.env.GITHUB_REPO;         // e.g. 'cms-survey'
+  const workflowId = process.env.GITHUB_WORKFLOW || 'deploy.yml';
+  const branch = process.env.GITHUB_BRANCH || 'main';
+  const token = process.env.GITHUB_TOKEN;
 
-await fetch(
-  `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
-  {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github+json',
+  // If any required env var is missing, fall back to simulation so local dev still works
+  if (!owner || !repo || !token) {
+    console.warn('[publish] -> Missing GITHUB_OWNER / GITHUB_REPO / GITHUB_TOKEN — running in simulation mode.');
+    console.log('[publish] -> Simulating GitHub Actions trigger...');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    console.log('[publish] -> Build started, pulling fresh data...');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    console.log('[publish] -> Static site built.');
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log('[publish] -> Uploaded via FTP to Hostinger. Live site updated (simulated).');
+    return { simulated: true };
+  }
+
+  // --- REAL GitHub workflow_dispatch call ---
+  console.log(`[publish] -> Triggering GitHub Actions: ${owner}/${repo}/${workflowId} @ ${branch}`);
+  const response = await fetch(
+    `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      body: JSON.stringify({ ref: branch }),
     },
-    body: JSON.stringify({ ref: 'main' }),
-  },
-);
+  );
 
-  console.log('[publish] -> Simulating GitHub Actions trigger...');
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  console.log('[publish] -> Build started, pulling fresh data...');
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  console.log('[publish] -> Static site built.');
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log('[publish] -> Uploaded via FTP to Hostinger. Live site updated.');
+  // GitHub returns 204 No Content on success
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`GitHub API error ${response.status}: ${body}`);
+  }
+
+  console.log('[publish] -> GitHub Actions workflow dispatched successfully (HTTP 204).');
+  return { simulated: false };
 }
 
 app.post('/api/publish', async (req, res) => {
@@ -111,16 +127,19 @@ app.post('/api/publish', async (req, res) => {
     writeDb(db);
 
     // Step 2: trigger the build + deploy pipeline
-    await triggerGitHubBuild();
+    const result = await triggerGitHubBuild();
 
     res.json({
-      message: 'Publish triggered successfully',
+      message: result.simulated
+        ? 'Publish triggered successfully — running in simulation mode (check Railway env vars)'
+        : 'Publish triggered successfully — check GitHub Actions',
+      simulated: result.simulated,
       publishedAt: db.lastPublishedAt,
       surveyCount: db.surveys.length,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Publish failed' });
+    res.status(500).json({ error: 'Publish failed', detail: err.message });
   }
 });
 
