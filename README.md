@@ -50,18 +50,44 @@ This runs on http://localhost:5173 — open that in your browser.
   3. Simulates the FTP deploy to Hostinger
   4. Reports back success, shown as a live step-by-step tracker in the UI
 
-## Going from this demo to your real production stack
-This is deliberately simplified so it runs with zero setup. To turn it into
-your real Next.js + NestJS + Railway + Hostinger setup:
+## Configuration & Deployment Setup
 
-| This demo | Your production version |
-|---|---|
-| `db.json` file | PostgreSQL on Railway, via TypeORM/Prisma |
-| Plain Express | NestJS |
-| Plain React + Vite | Next.js (with `output: 'export'`) |
-| `triggerGitHubBuild()` stub | Real call to GitHub's `workflow_dispatch` API |
-| (nothing) | GitHub Actions workflow that builds + FTPs to Hostinger |
+### 1. Configure Railway (or Backend Server) Environment Variables
+Set these variables in Railway (or in `backend/.env`):
+```env
+GITHUB_OWNER=your-github-username
+GITHUB_REPO=cms-survey
+GITHUB_WORKFLOW=deploy.yml
+GITHUB_BRANCH=main
+GITHUB_TOKEN=ghp_your_github_personal_access_token
+```
 
-The `server.js` file has the real GitHub API call written out and commented,
-right where the stub currently is — uncomment and fill in your repo details
-and token to make it live.
+### 2. Configure GitHub Secrets for Hostinger FTP
+In your GitHub Repository → **Settings** → **Secrets and variables** → **Actions**, add:
+- `FTP_SERVER`: `ftp.yourdomain.com` (or your Hostinger IP address)
+- `FTP_USERNAME`: `your-ftp-username`
+- `FTP_PASSWORD`: `your-ftp-password`
+- `FTP_SERVER_DIR`: `/public_html/`
+- `VITE_API_URL`: `https://honest-strength-production-e0ed.up.railway.app`
+
+### 3. Complete Architecture Flow
+```
+Frontend (CMS UI)
+   │  (User clicks 'Publish')
+   ▼
+POST /api/publish (Express Backend / Railway)
+   │
+   ├── 1. Update Database (Postgres / db.json)
+   └── 2. Trigger GitHub Actions (POST https://api.github.com/repos/.../dispatches)
+          │
+          ▼
+   GitHub Actions Workflow (.github/workflows/deploy.yml)
+          │
+          ├── 1. Checkout repository & setup Node.js
+          ├── 2. Run `npm run build` (generates static html/js/css in dist/)
+          └── 3. Deploy via FTP (SamKirsch/ftp-deploy-action) ──► Hostinger (public_html)
+                                                                     │
+                                                                     ▼
+                                                          Live Site Updated
+```
+
