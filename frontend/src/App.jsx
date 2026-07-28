@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 // In dev → calls localhost:4000
 // In production build → VITE_API_URL is baked in by GitHub Actions from the secret
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const PUBLISH_STEPS = [
   'Saving to database',
