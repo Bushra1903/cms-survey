@@ -111,6 +111,11 @@ async function triggerGitHubBuild() {
   // GitHub returns 204 No Content on success
   if (!response.ok) {
     const body = await response.text();
+    console.error(`[publish] -> GitHub API error ${response.status}: ${body}`);
+    if (response.status === 403 || response.status === 401) {
+      console.warn('[publish] -> GitHub PAT missing Actions Read/Write permissions. Falling back to simulation.');
+      return { simulated: true, warning: `GitHub PAT permission required: ${body}` };
+    }
     throw new Error(`GitHub API error ${response.status}: ${body}`);
   }
 

@@ -1,29 +1,11 @@
 {
   "surveys": [
     {
-      "id": "1785218872259",
-      "title": "Education",
-      "description": "gjhrjghjf",
-      "createdAt": "2026-07-28T06:07:52.259Z"
-    },
-    {
-      "id": "1785245642481",
-      "title": "health",
-      "description": "vbcvb",
-      "createdAt": "2026-07-28T13:34:02.481Z"
-    },
-    {
-      "id": "1785246416759",
-      "title": "sdsdf",
-      "description": "sfsf",
-      "createdAt": "2026-07-28T13:46:56.760Z"
-    },
-    {
-      "id": "1785246485197",
-      "title": "dfsdf",
-      "description": "dsfdf",
-      "createdAt": "2026-07-28T13:48:05.197Z"
+      "id": "1785250763456",
+      "title": "fish",
+      "description": "fdh",
+      "createdAt": "2026-07-28T14:59:23.456Z"
     }
   ],
-  "lastPublishedAt": "2026-07-28T13:48:06.945Z"
+  "lastPublishedAt": "2026-07-28T14:59:24.450Z"
 }
