@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const API_URL = 'http://localhost:4000';
+const API_URL = import.meta.env.PROD ? '' : 'http://localhost:4000';
 
 const PUBLISH_STEPS = [
   'Saving to database',

@@ -10,6 +10,9 @@ const DB_FILE = path.join(__dirname, 'db.json');
 app.use(cors());
 app.use(express.json());
 
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 // ---------------------------------------------------------------------------
 // "DATABASE" LAYER
 // This demo uses a plain JSON file so the whole thing runs with zero setup.
@@ -119,6 +122,11 @@ app.post('/api/publish', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Publish failed' });
   }
+});
+
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
 });
 
 app.listen(PORT, () => {
