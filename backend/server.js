@@ -75,22 +75,22 @@ app.delete('/api/surveys/:id', (req, res) => {
 async function triggerGitHubBuild() {
   // --- REAL IMPLEMENTATION (uncomment and fill in for production) ---
   //
-  // const owner = process.env.GITHUB_OWNER;
-  // const repo = process.env.GITHUB_REPO;
-  // const workflowId = 'deploy.yml';
-  // const token = process.env.GITHUB_TOKEN;
-  //
-  // await fetch(
-  //   `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
-  //   {
-  //     method: 'POST',
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       Accept: 'application/vnd.github+json',
-  //     },
-  //     body: JSON.stringify({ ref: 'main' }),
-  //   },
-  // );
+  const owner = process.env.GITHUB_OWNER;
+const repo = process.env.GITHUB_REPO; // 'cms-survey'
+const workflowId = 'deploy.yml';       // the filename of your workflow
+const token = process.env.GITHUB_TOKEN;
+
+await fetch(
+  `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflowId}/dispatches`,
+  {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github+json',
+    },
+    body: JSON.stringify({ ref: 'main' }),
+  },
+);
 
   console.log('[publish] -> Simulating GitHub Actions trigger...');
   await new Promise((resolve) => setTimeout(resolve, 1500));
