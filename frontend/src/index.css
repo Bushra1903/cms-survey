@@ -1,0 +1,165 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f6f7f9;
+  color: #1f2937;
+}
+
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  margin: 0 0 4px;
+  font-size: 28px;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin: 0;
+  font-size: 14px;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.panel h2 {
+  margin-top: 0;
+  font-size: 16px;
+  color: #374151;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form input,
+.form textarea {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.form button {
+  align-self: flex-start;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.form button:hover {
+  background: #1d4ed8;
+}
+
+.empty {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.survey-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.survey-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 1px solid #eef0f2;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.survey-item p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.publish-panel {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
+.publish-btn {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.publish-btn:disabled {
+  background: #86efac;
+  cursor: not-allowed;
+}
+
+.steps {
+  margin: 16px 0 0;
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.step {
+  color: #9ca3af;
+  padding: 4px 0;
+}
+
+.step.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.step.done {
+  color: #16a34a;
+}
+
+.success {
+  color: #16a34a;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.error-msg {
+  color: #dc2626;
+  margin-top: 12px;
+}
