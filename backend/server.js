@@ -21,10 +21,16 @@ app.use(express.static(path.join(__dirname, '../frontend/dist')));
 // Swap readDb()/writeDb() for real DB calls when you connect Railway's Postgres.
 // ---------------------------------------------------------------------------
 function readDb() {
-  if (!fs.existsSync(DB_FILE)) {
+  try {
+    if (!fs.existsSync(DB_FILE)) {
+      return { surveys: [], lastPublishedAt: null };
+    }
+    const content = fs.readFileSync(DB_FILE, 'utf-8').trim();
+    return content ? JSON.parse(content) : { surveys: [], lastPublishedAt: null };
+  } catch (err) {
+    console.error('Error reading db.json:', err);
     return { surveys: [], lastPublishedAt: null };
   }
-  return JSON.parse(fs.readFileSync(DB_FILE, 'utf-8'));
 }
 
 function writeDb(data) {
