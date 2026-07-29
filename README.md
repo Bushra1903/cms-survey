@@ -52,23 +52,32 @@ This runs on http://localhost:5173 — open that in your browser.
 
 ## Configuration & Deployment Setup
 
-### 1. Configure Railway (or Backend Server) Environment Variables
-Set these variables in Railway (or in `backend/.env`):
+### 1. Deploy to Render.com (Free)
+
+1. Go to [render.com](https://render.com) and sign in with GitHub
+2. Click **New → Web Service**
+3. Connect your `Bushra1903/cms-survey` repository
+4. Render will auto-detect `render.yaml` — confirm these settings:
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Environment**: `Node`
+5. Add Environment Variables (in Render dashboard → Environment tab):
 ```env
-GITHUB_OWNER=your-github-username
+GITHUB_OWNER=Bushra1903
 GITHUB_REPO=cms-survey
 GITHUB_WORKFLOW=deploy.yml
 GITHUB_BRANCH=main
 GITHUB_TOKEN=ghp_your_github_personal_access_token
 ```
+6. Click **Deploy** — your app will be live at `https://cms-survey.onrender.com`
 
-### 2. Configure GitHub Secrets for Hostinger FTP
+### 2. Update GitHub Secrets for Hostinger FTP
 In your GitHub Repository → **Settings** → **Secrets and variables** → **Actions**, add:
 - `FTP_SERVER`: `ftp.yourdomain.com` (or your Hostinger IP address)
 - `FTP_USERNAME`: `your-ftp-username`
 - `FTP_PASSWORD`: `your-ftp-password`
 - `FTP_SERVER_DIR`: `/public_html/`
-- `VITE_API_URL`: `https://honest-strength-production-e0ed.up.railway.app`
+- `VITE_API_URL`: `https://cms-survey.onrender.com`
 
 ### 3. Complete Architecture Flow
 ```

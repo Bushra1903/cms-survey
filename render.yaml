@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: cms-survey
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GITHUB_OWNER
+        sync: false
+      - key: GITHUB_REPO
+        sync: false
+      - key: GITHUB_WORKFLOW
+        value: deploy.yml
+      - key: GITHUB_BRANCH
+        value: main
+      - key: GITHUB_TOKEN
+        sync: false
